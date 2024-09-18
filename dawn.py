@@ -64,13 +64,10 @@ def read_account(filename="config.json"):
             return accounts 
     except FileNotFoundError:
         print(f"{Fore.RED}[X] Error: config file '{filename}' not found.{Style.BRIGHT}")
-        asyncio.run(telegram_message(f"🚨 DAWN VALIDATOR NOTIFICATION 🚨\n\n❌ Failed to read the config.json file. Check the configuration file."))
         return []
     except json.JSONDecodeError:
         print(f"{Fore.RED}[X] Error: Invalid JSON format in '{filename}'.{Style.BRIGHT}")
-        asyncio.run(telegram_message(f"🚨 DAWN VALIDATOR NOTIFICATION 🚨\n\n❌ The JSON format in the file '{filename}' is not valid."))
         return []
-
 
 def total_points(headers):
     try:
@@ -139,6 +136,9 @@ async def main():
             break
 
         total_points_all_users = 0
+        messages = []
+
+        messages.append("📢 DAWN Internet Validator Extension\n")
 
         for account_index, account in enumerate(accounts):
             email = account["email"]
@@ -160,31 +160,23 @@ async def main():
             success, status_message = keep_alive(headers, email)
 
             if success:
-                message = f"""✴️ DAWN VALIDATOR NOTIFICATION ✴️
-
-👤 Account: {email}
-ℹ️ Status: Keep alive ✅
-💰 Point: +{points:,.0f}
-
-GG! Your account successfully "Keep Alive", See you on the next loop. 👋"""
-                await telegram_message(message)
+                messages.append(f"""👤 acc: {email}
+💰 point: +{points:,.0f} - Alive ✅
+""")
                 print(f"{Fore.GREEN}[✓] Status: Keep alive recorded{Style.BRIGHT}")
                 print(f"{Fore.GREEN}[✓] Request for {email} successful.{Style.BRIGHT}\n")
             else:
-                message = f"""🚨 DAWN VALIDATOR NOTIFICATION 🚨
-
-👤 Account: {email}
-ℹ️ Status: Failed ❌
-⚠️ Error: {status_message}
-
-Oops! There was an error in the "Keep Alive" process. Don't worry, it won't take long. 👌"""
-                await telegram_message(message)
+                messages.append(f"""👤 acc: {email} - Failed ❌
+⚠️ err: {status_message}
+""")
                 print(f"{Fore.RED}[X] Status: Keep alive failed!{Style.BRIGHT}")
                 print(f"{Fore.RED}[X] Error: {status_message}{Style.BRIGHT}\n")
 
-        print(f"{Fore.CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━{Style.BRIGHT}")
-        print(f"{Fore.MAGENTA}[@] All accounts processed.{Style.BRIGHT}")
-        print(f"{Fore.GREEN}[+] Total points from all users: {total_points_all_users}{Style.BRIGHT}")
+        combined_message = "\n".join(messages)
+        combined_message += f"\nAll accounts processed.\nTotal points from all users: 💰 {total_points_all_users:,.0f}\n"
+
+        if combined_message:
+            await telegram_message(combined_message)
 
         countdown(181)
         print(f"\n{Fore.GREEN}[✓] Restarting the process...{Style.BRIGHT}\n")
