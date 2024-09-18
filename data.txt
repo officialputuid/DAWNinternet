@@ -1,2 +1,0 @@
-email1@gmail.com|token1
-email2@gmail.com|token2
