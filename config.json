@@ -1,14 +1,15 @@
 {
   "telegram_bot_token": "YOUR_TOKEN_ID FROM @BotFather",
   "telegram_chat_id": "YOUR_CHAT_ID FROM @getmyid_bot",
+  "appid": "YOUR_APPID FROM (Inspect - Network - getpoint)",
   "accounts": [
     {
       "email": "example@domain.com",
-      "token": "get token? Inspect - Network - getpoint - Authorization"
+      "token": "get token? (Inspect - Network - getpoint - Authorization)"
     },
     {
-      "email": "example@domain.com",
-      "token": "get token? Inspect - Network - getpoint - Authorization"
+      "email": "example2@domain.com",
+      "token": "get token? (Inspect - Network - getpoint - Authorization)"
     }
   ]
 }
